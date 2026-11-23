@@ -67,13 +67,34 @@
         tab.addEventListener('click', function () {
             var target = tab.getAttribute('data-tab');
             tabs.forEach(function (item) {
-                item.classList.toggle('nav-tab-active', item === tab);
+                var active = item === tab;
+                item.classList.toggle('nav-tab-active', active);
+                item.setAttribute('aria-selected', active ? 'true' : 'false');
             });
             panels.forEach(function (panel) {
                 panel.hidden = panel.getAttribute('data-panel') !== target;
             });
         });
     });
+
+    // Dirty-state hint in the sticky save bar.
+    var settingsForm = document.querySelector('.aicommentaudit-settings-form');
+    var saveState = document.getElementById('aicommentaudit-save-state');
+    if (settingsForm && saveState) {
+        var dirty = false;
+        var markDirty = function () {
+            if (dirty) return;
+            dirty = true;
+            saveState.textContent = '有未保存的更改';
+            saveState.classList.add('is-dirty');
+        };
+        settingsForm.addEventListener('input', markDirty);
+        settingsForm.addEventListener('change', markDirty);
+        settingsForm.addEventListener('submit', function () {
+            saveState.textContent = '正在保存…';
+            saveState.classList.remove('is-dirty');
+        });
+    }
 
     // Test connection.
     var testButton = document.getElementById('aicommentaudit-test');

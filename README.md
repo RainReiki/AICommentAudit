@@ -27,7 +27,7 @@ AICommentAudit 把评论审核拆成三层：
 
 ## 安装
 
-1. 下载 Release 中的 [AICommentAudit-1.1.0.zip](https://github.com/RainReiki/AICommentAudit/releases/download/v1.1.0/AICommentAudit-1.1.0.zip)；
+1. 下载 Release 中的 [AICommentAudit-1.2.0.zip](https://github.com/RainReiki/AICommentAudit/releases/download/v1.2.0/AICommentAudit-1.2.0.zip)；
 2. 后台 → 插件 → 安装插件 → 上传 zip；
 3. 启用插件；
 4. 打开「评论审核 → 设置」，填写服务地址、API Key 和模型；

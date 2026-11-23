@@ -4,7 +4,7 @@ Tags: comments, comment moderation, spam, ai, deepseek
 Requires at least: 7.1
 Tested up to: 7.1.5
 Requires PHP: 8.0
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,11 @@ AI 调用是同步的。可以在设置里关闭思考模式、降低最大 toke
 评论内容、昵称、邮箱前缀与域名、网址域名、文章标题/原文/摘要、回复上下文、评论者信誉统计和身份历史摘要。不会发送完整邮箱、IP、网址路径或参数。
 
 == Changelog ==
+
+= 1.2.0 =
+* 后台设置页改为更现代的卡片式布局：分栏标签、分组说明、圆角输入框、芯片式单选项和底部固定保存栏。
+* 增加设置未保存提示、更清晰的连接状态和更舒适的移动端布局。
+* 设置保存、模型列表和审核逻辑不变。
 
 = 1.1.0 =
 * 插件更名为 AICommentAudit。

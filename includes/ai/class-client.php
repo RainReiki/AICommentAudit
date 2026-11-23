@@ -13,7 +13,7 @@ defined('ABSPATH') || exit;
  */
 final class Client
 {
-    private const USER_AGENT = 'AICommentAudit-WP/1.1.0';
+    private const USER_AGENT = 'AICommentAudit-WP/1.2.0';
 
     /**
      * @param array $comment

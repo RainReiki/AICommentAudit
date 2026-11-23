@@ -133,24 +133,39 @@ final class Admin
         $cacheCleared = isset($_GET['cache_cleared']);
         ?>
         <div class="wrap aicommentaudit-wrap">
-            <h1><?php esc_html_e('评论审核设置', 'ai-comment-audit'); ?></h1>
+            <div class="aicommentaudit-page-head">
+                <div class="aicommentaudit-page-head-main">
+                    <span class="aicommentaudit-eyebrow">AICommentAudit</span>
+                    <h1><?php esc_html_e('评论审核设置', 'ai-comment-audit'); ?></h1>
+                    <p class="aicommentaudit-subtitle"><?php esc_html_e('本地规则 + AI 审核。所有密钥和规则只保存在本机，保存后立即生效。', 'ai-comment-audit'); ?></p>
+                </div>
+                <div class="aicommentaudit-page-head-meta">
+                    <span class="aicommentaudit-pill"><?php echo esc_html('v' . AICOMMENTAUDIT_VERSION); ?></span>
+                    <span class="aicommentaudit-pill <?php echo $s['apiKey'] !== '' ? 'is-ok' : 'is-warn'; ?>">
+                        <?php echo $s['apiKey'] !== '' ? esc_html__('AI 已配置', 'ai-comment-audit') : esc_html__('AI 未配置', 'ai-comment-audit'); ?>
+                    </span>
+                    <span class="aicommentaudit-pill is-neutral"><?php echo esc_html('WordPress ' . get_bloginfo('version')); ?></span>
+                </div>
+            </div>
             <?php if ($updated): ?><div class="notice notice-success is-dismissible"><p><?php esc_html_e('设置已保存。', 'ai-comment-audit'); ?></p></div><?php endif; ?>
             <?php if ($cacheCleared): ?><div class="notice notice-success is-dismissible"><p><?php esc_html_e('AI 缓存已清空。', 'ai-comment-audit'); ?></p></div><?php endif; ?>
 
-            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="aicommentaudit-form">
+            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="aicommentaudit-form aicommentaudit-settings-form">
                 <input type="hidden" name="action" value="aicommentaudit_save_settings">
                 <?php wp_nonce_field('aicommentaudit_save_settings'); ?>
 
-                <nav class="nav-tab-wrapper aicommentaudit-tabs">
-                    <button type="button" class="nav-tab nav-tab-active" data-tab="connection"><?php esc_html_e('连接', 'ai-comment-audit'); ?></button>
-                    <button type="button" class="nav-tab" data-tab="words"><?php esc_html_e('词表', 'ai-comment-audit'); ?></button>
-                    <button type="button" class="nav-tab" data-tab="blacklist"><?php esc_html_e('黑名单', 'ai-comment-audit'); ?></button>
-                    <button type="button" class="nav-tab" data-tab="precheck"><?php esc_html_e('频率与链接', 'ai-comment-audit'); ?></button>
-                    <button type="button" class="nav-tab" data-tab="policy"><?php esc_html_e('审核策略', 'ai-comment-audit'); ?></button>
-                    <button type="button" class="nav-tab" data-tab="advanced"><?php esc_html_e('高级', 'ai-comment-audit'); ?></button>
+                <nav class="nav-tab-wrapper aicommentaudit-tabs" role="tablist" aria-label="<?php esc_attr_e('设置分组', 'ai-comment-audit'); ?>">
+                    <button type="button" class="nav-tab nav-tab-active" id="aicommentaudit-tab-connection" data-tab="connection" role="tab" aria-selected="true" aria-controls="aicommentaudit-panel-connection"><?php esc_html_e('连接', 'ai-comment-audit'); ?></button>
+                    <button type="button" class="nav-tab" id="aicommentaudit-tab-words" data-tab="words" role="tab" aria-selected="false" aria-controls="aicommentaudit-panel-words"><?php esc_html_e('词表', 'ai-comment-audit'); ?></button>
+                    <button type="button" class="nav-tab" id="aicommentaudit-tab-blacklist" data-tab="blacklist" role="tab" aria-selected="false" aria-controls="aicommentaudit-panel-blacklist"><?php esc_html_e('黑名单', 'ai-comment-audit'); ?></button>
+                    <button type="button" class="nav-tab" id="aicommentaudit-tab-precheck" data-tab="precheck" role="tab" aria-selected="false" aria-controls="aicommentaudit-panel-precheck"><?php esc_html_e('频率与链接', 'ai-comment-audit'); ?></button>
+                    <button type="button" class="nav-tab" id="aicommentaudit-tab-policy" data-tab="policy" role="tab" aria-selected="false" aria-controls="aicommentaudit-panel-policy"><?php esc_html_e('审核策略', 'ai-comment-audit'); ?></button>
+                    <button type="button" class="nav-tab" id="aicommentaudit-tab-advanced" data-tab="advanced" role="tab" aria-selected="false" aria-controls="aicommentaudit-panel-advanced"><?php esc_html_e('高级', 'ai-comment-audit'); ?></button>
                 </nav>
 
-                <section class="aicommentaudit-panel" data-panel="connection">
+                <section class="aicommentaudit-panel" data-panel="connection" id="aicommentaudit-panel-connection" role="tabpanel" aria-labelledby="aicommentaudit-tab-connection">
+                    <h3><?php esc_html_e('AI 服务连接', 'ai-comment-audit'); ?></h3>
+                    <p class="aicommentaudit-section-desc"><?php esc_html_e('配置服务地址、API Key 和模型。支持 DeepSeek 官方和 OpenAI 兼容中转站。', 'ai-comment-audit'); ?></p>
                     <table class="form-table">
                         <tr><th><label for="aicommentaudit-base-url"><?php esc_html_e('服务地址', 'ai-comment-audit'); ?></label></th>
                             <td><input class="regular-text" id="aicommentaudit-base-url" name="baseUrl" value="<?php echo esc_attr($s['baseUrl']); ?>">
@@ -182,7 +197,9 @@ final class Admin
                     </table>
                 </section>
 
-                <section class="aicommentaudit-panel" data-panel="words" hidden>
+                <section class="aicommentaudit-panel" data-panel="words" id="aicommentaudit-panel-words" role="tabpanel" aria-labelledby="aicommentaudit-tab-words" hidden>
+                    <h3><?php esc_html_e('词表与匹配范围', 'ai-comment-audit'); ?></h3>
+                    <p class="aicommentaudit-section-desc"><?php esc_html_e('明确违禁词直接拒绝；疑似敏感词只作为 AI 的参考信号。', 'ai-comment-audit'); ?></p>
                     <table class="form-table">
                         <tr><th><label for="aicommentaudit-block-words"><?php esc_html_e('明确违禁词', 'ai-comment-audit'); ?></label></th>
                             <td><textarea class="large-text" rows="6" id="aicommentaudit-block-words" name="blockWords"><?php echo esc_textarea($s['blockWords']); ?></textarea><p class="description"><?php esc_html_e('每行一个词，命中直接拒绝。', 'ai-comment-audit'); ?></p></td></tr>
@@ -198,7 +215,9 @@ final class Admin
                     </table>
                 </section>
 
-                <section class="aicommentaudit-panel" data-panel="blacklist" hidden>
+                <section class="aicommentaudit-panel" data-panel="blacklist" id="aicommentaudit-panel-blacklist" role="tabpanel" aria-labelledby="aicommentaudit-tab-blacklist" hidden>
+                    <h3><?php esc_html_e('黑名单', 'ai-comment-audit'); ?></h3>
+                    <p class="aicommentaudit-section-desc"><?php esc_html_e('命中任意名单的评论会被直接拒绝，不消耗 AI 调用。', 'ai-comment-audit'); ?></p>
                     <table class="form-table">
                         <tr><th><label for="aicommentaudit-ip-blacklist"><?php esc_html_e('IP 黑名单', 'ai-comment-audit'); ?></label></th>
                             <td><textarea class="large-text" rows="5" id="aicommentaudit-ip-blacklist" name="ipBlacklist"><?php echo esc_textarea($s['ipBlacklist']); ?></textarea><p class="description"><?php esc_html_e('每行一个 IP 或 CIDR，例如 192.0.2.0/24。', 'ai-comment-audit'); ?></p></td></tr>
@@ -209,7 +228,9 @@ final class Admin
                     </table>
                 </section>
 
-                <section class="aicommentaudit-panel" data-panel="precheck" hidden>
+                <section class="aicommentaudit-panel" data-panel="precheck" id="aicommentaudit-panel-precheck" role="tabpanel" aria-labelledby="aicommentaudit-tab-precheck" hidden>
+                    <h3><?php esc_html_e('频率与链接', 'ai-comment-audit'); ?></h3>
+                    <p class="aicommentaudit-section-desc"><?php esc_html_e('在提交给 AI 之前检查同一 IP 的发评频率和评论中的链接数。', 'ai-comment-audit'); ?></p>
                     <table class="form-table">
                         <tr><th><label for="aicommentaudit-ip-limit"><?php esc_html_e('同一 IP 评论数上限', 'ai-comment-audit'); ?></label></th>
                             <td><input type="number" min="0" id="aicommentaudit-ip-limit" name="ipRateLimit" value="<?php echo (int) $s['ipRateLimit']; ?>"><p class="description"><?php esc_html_e('填 0 可关闭频率限制。', 'ai-comment-audit'); ?></p></td></tr>
@@ -220,7 +241,9 @@ final class Admin
                     </table>
                 </section>
 
-                <section class="aicommentaudit-panel" data-panel="policy" hidden>
+                <section class="aicommentaudit-panel" data-panel="policy" id="aicommentaudit-panel-policy" role="tabpanel" aria-labelledby="aicommentaudit-tab-policy" hidden>
+                    <h3><?php esc_html_e('审核策略', 'ai-comment-audit'); ?></h3>
+                    <p class="aicommentaudit-section-desc"><?php esc_html_e('身份检查和 AI 拒绝阈值。AI 调用失败时始终转待审。', 'ai-comment-audit'); ?></p>
                     <table class="form-table">
                         <tr><th><?php esc_html_e('自动检查身份信息', 'ai-comment-audit'); ?></th>
                             <td><label><input type="radio" name="identityProtection" value="1" <?php checked(!empty($s['identityProtection'])); ?>> <?php esc_html_e('开启', 'ai-comment-audit'); ?></label>
@@ -233,7 +256,9 @@ final class Admin
                     </table>
                 </section>
 
-                <section class="aicommentaudit-panel" data-panel="advanced" hidden>
+                <section class="aicommentaudit-panel" data-panel="advanced" id="aicommentaudit-panel-advanced" role="tabpanel" aria-labelledby="aicommentaudit-tab-advanced" hidden>
+                    <h3><?php esc_html_e('高级设置', 'ai-comment-audit'); ?></h3>
+                    <p class="aicommentaudit-section-desc"><?php esc_html_e('日志保留、AI 缓存、评论列表显示和卸载行为。', 'ai-comment-audit'); ?></p>
                     <table class="form-table">
                         <tr><th><label for="aicommentaudit-log-retention"><?php esc_html_e('日志保留天数', 'ai-comment-audit'); ?></label></th>
                             <td><input type="number" min="1" max="3650" id="aicommentaudit-log-retention" name="logRetention" value="<?php echo (int) $s['logRetention']; ?>"></td></tr>
@@ -248,15 +273,26 @@ final class Admin
                     </table>
                 </section>
 
-                <p class="submit"><button type="submit" class="button button-primary"><?php esc_html_e('保存设置', 'ai-comment-audit'); ?></button></p>
+                <div class="aicommentaudit-savebar">
+                    <div class="aicommentaudit-savebar-info">
+                        <strong><?php esc_html_e('保存更改', 'ai-comment-audit'); ?></strong>
+                        <span id="aicommentaudit-save-state" class="aicommentaudit-save-state"><?php esc_html_e('所有更改已保存', 'ai-comment-audit'); ?></span>
+                    </div>
+                    <p class="submit"><button type="submit" class="button button-primary aicommentaudit-save-button"><?php esc_html_e('保存设置', 'ai-comment-audit'); ?></button></p>
+                </div>
             </form>
 
-            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="aicommentaudit-clear-cache">
-                <input type="hidden" name="action" value="aicommentaudit_clear_cache">
-                <?php wp_nonce_field('aicommentaudit_clear_cache'); ?>
-                <button type="submit" class="button button-secondary"><?php esc_html_e('清空 AI 缓存', 'ai-comment-audit'); ?></button>
-                <span class="aicommentaudit-muted"><?php esc_html_e('仅在修改提示词或模型后需要。', 'ai-comment-audit'); ?></span>
-            </form>
+            <div class="aicommentaudit-utility-card">
+                <div class="aicommentaudit-utility-copy">
+                    <strong><?php esc_html_e('维护', 'ai-comment-audit'); ?></strong>
+                    <p><?php esc_html_e('清空 AI 缓存。仅在修改提示词、模型或怀疑缓存异常时需要。', 'ai-comment-audit'); ?></p>
+                </div>
+                <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="aicommentaudit-clear-cache">
+                    <input type="hidden" name="action" value="aicommentaudit_clear_cache">
+                    <?php wp_nonce_field('aicommentaudit_clear_cache'); ?>
+                    <button type="submit" class="button button-secondary"><?php esc_html_e('清空 AI 缓存', 'ai-comment-audit'); ?></button>
+                </form>
+            </div>
         </div>
         <?php
     }
