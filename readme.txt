@@ -4,7 +4,7 @@ Tags: comments, comment moderation, spam, ai, deepseek
 Requires at least: 7.1
 Tested up to: 7.1.5
 Requires PHP: 8.0
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -62,6 +62,11 @@ AI 调用是同步的。可以在设置里关闭思考模式、降低最大 toke
 评论内容、昵称、邮箱前缀与域名、网址域名、文章标题/原文/摘要、回复上下文、评论者信誉统计和身份历史摘要。不会发送完整邮箱、IP、网址路径或参数。
 
 == Changelog ==
+
+= 1.3.1 =
+* 后台设置页增加「查看更新」链接，指向 GitHub 仓库。
+* 额度分栏增加简单的填写建议：按评论量估算、留 20% 缓冲。
+* GitHub README 补充令牌额度的缓冲和建议填写说明。
 
 = 1.3.0 =
 * 新增 API 令牌额度设置：支持每日、每月、累计三种周期，0 表示不限制。

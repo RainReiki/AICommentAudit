@@ -94,6 +94,22 @@
     display: none;
 }
 
+.aicommentaudit-pill.is-link {
+    color: var(--ca-accent);
+    text-decoration: none;
+}
+
+.aicommentaudit-pill.is-link::before {
+    display: none;
+}
+
+.aicommentaudit-pill.is-link:hover,
+.aicommentaudit-pill.is-link:focus {
+    border-color: var(--ca-accent);
+    background: var(--ca-accent-soft);
+    color: var(--ca-accent-dark);
+}
+
 .aicommentaudit-muted {
     color: var(--ca-muted);
 }
@@ -315,6 +331,29 @@
 }
 
 /* API quota */
+.aicommentaudit-quota-help {
+    max-width: 760px;
+    margin: 14px 0 4px;
+    padding: 14px 16px;
+    border: 1px solid #d9e0ff;
+    border-radius: 10px;
+    background: #f5f7ff;
+}
+
+.aicommentaudit-quota-help strong {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--ca-text);
+    font-size: 13px;
+}
+
+.aicommentaudit-quota-help p {
+    margin: 4px 0 0;
+    color: #50575e;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
 .aicommentaudit-quota-fields {
     display: flex;
     flex-wrap: wrap;

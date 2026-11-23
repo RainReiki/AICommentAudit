@@ -147,6 +147,7 @@ final class Admin
                 </div>
                 <div class="aicommentaudit-page-head-meta">
                     <span class="aicommentaudit-pill"><?php echo esc_html('v' . AICOMMENTAUDIT_VERSION); ?></span>
+                    <a class="aicommentaudit-pill is-link" href="https://github.com/RainReiki/AICommentAudit" target="_blank" rel="noopener noreferrer"><?php esc_html_e('查看更新', 'ai-comment-audit'); ?> ↗</a>
                     <span class="aicommentaudit-pill <?php echo $s['apiKey'] !== '' ? 'is-ok' : 'is-warn'; ?>">
                         <?php echo $s['apiKey'] !== '' ? esc_html__('AI 已配置', 'ai-comment-audit') : esc_html__('AI 未配置', 'ai-comment-audit'); ?>
                     </span>
@@ -207,6 +208,11 @@ final class Admin
                 <section class="aicommentaudit-panel" data-panel="quota" id="aicommentaudit-panel-quota" role="tabpanel" aria-labelledby="aicommentaudit-tab-quota" hidden>
                     <h3><?php esc_html_e('API 额度', 'ai-comment-audit'); ?></h3>
                     <p class="aicommentaudit-section-desc"><?php esc_html_e('限制插件调用 AI 时最多消耗多少令牌。达到额度后，新评论会转为待审，不再请求接口。', 'ai-comment-audit'); ?></p>
+                    <div class="aicommentaudit-quota-help">
+                        <strong><?php esc_html_e('怎么填？', 'ai-comment-audit'); ?></strong>
+                        <p><?php esc_html_e('一次审核约消耗 3,000–6,000 tokens。建议额度 = 每月评论数 × 5,000 × 1.2，并额外留 20% 缓冲。', 'ai-comment-audit'); ?></p>
+                        <p><?php esc_html_e('例：300 条/月 ≈ 1,800,000；1,000 条/月 ≈ 6,000,000。测试可先填 100,000；填 0 表示不限制。', 'ai-comment-audit'); ?></p>
+                    </div>
                     <table class="form-table">
                         <tr><th><label for="aicommentaudit-token-quota"><?php esc_html_e('令牌额度', 'ai-comment-audit'); ?></label></th>
                             <td>
