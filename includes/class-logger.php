@@ -142,6 +142,7 @@ final class Logger
             'ai_review' => __('AI 转待审', 'ai-comment-audit'),
             'ai_error' => __('AI 审核失败', 'ai-comment-audit'),
             'ai_missing_key' => __('未配置 API Key', 'ai-comment-audit'),
+            'quota_exceeded' => __('API 令牌额度已用完', 'ai-comment-audit'),
             'ai_circuit_open' => __('AI 熔断中', 'ai-comment-audit'),
             'ai_unknown' => __('AI 结果无法判断', 'ai-comment-audit'),
             'abuse_mild' => __('轻度负面评论', 'ai-comment-audit'),

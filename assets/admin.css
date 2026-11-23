@@ -314,6 +314,66 @@
     vertical-align: middle;
 }
 
+/* API quota */
+.aicommentaudit-quota-fields {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.aicommentaudit-quota-fields input[type="number"] {
+    max-width: 220px;
+}
+
+.aicommentaudit-quota-fields select {
+    max-width: 220px;
+}
+
+.aicommentaudit-quota-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+    margin: 4px 0 8px;
+}
+
+.aicommentaudit-quota-summary strong {
+    font-size: 20px;
+    line-height: 1.2;
+}
+
+.aicommentaudit-quota-summary span {
+    color: var(--ca-muted);
+    font-size: 12px;
+}
+
+.aicommentaudit-quota-summary.is-reached strong {
+    color: #b32d2e;
+}
+
+.aicommentaudit-quota-meter {
+    width: 100%;
+    max-width: 720px;
+    height: 10px;
+    margin: 8px 0 10px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #f0f0f1;
+}
+
+.aicommentaudit-quota-meter span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--ca-accent);
+    transition: width .2s ease;
+}
+
+.aicommentaudit-quota-meter.is-reached span {
+    background: #d63638;
+}
+
 #aicommentaudit-models-status {
     display: block;
     margin-top: 8px;

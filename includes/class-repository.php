@@ -434,8 +434,7 @@ final class Repository
      * @return array
      */
     public static function getState($name): array
-    {
-        global $wpdb;
+    {        global $wpdb;
 
         $table = Install::stateTable();
         $raw = $wpdb->get_var($wpdb->prepare("SELECT value FROM {$table} WHERE name = %s", $name));
@@ -464,6 +463,58 @@ final class Repository
         } else {
             $wpdb->insert($table, ['name' => $name, 'value' => $raw, 'updated' => time()]);
         }
+    }
+
+    /**
+     * Key used to bucket token usage for a quota period.
+     *
+     * @param string $period daily|monthly|total
+     * @return string
+     */
+    public static function quotaPeriodKey(string $period): string
+    {
+        return match ($period) {
+            'daily' => (string) wp_date('Y-m-d'),
+            'total' => 'all',
+            default => (string) wp_date('Y-m'),
+        };
+    }
+
+    /**
+     * @param string $period daily|monthly|total
+     * @return array{period:string,tokens:int}
+     */
+    public static function getTokenUsage(string $period = 'monthly'): array
+    {
+        $key = self::quotaPeriodKey($period);
+        $state = self::getState('token_usage');
+        if (!is_array($state) || ($state['period'] ?? '') !== $key) {
+            return ['period' => $key, 'tokens' => 0];
+        }
+
+        return ['period' => $key, 'tokens' => max(0, (int) ($state['tokens'] ?? 0))];
+    }
+
+    /**
+     * @param int $tokens
+     * @param string $period daily|monthly|total
+     * @return array{period:string,tokens:int}
+     */
+    public static function addTokenUsage(int $tokens, string $period = 'monthly'): array
+    {
+        $usage = self::getTokenUsage($period);
+        $usage['tokens'] += max(0, $tokens);
+        self::setState('token_usage', $usage);
+        return $usage;
+    }
+
+    /**
+     * @param string $period daily|monthly|total
+     * @return void
+     */
+    public static function resetTokenUsage(string $period = 'monthly'): void
+    {
+        self::setState('token_usage', ['period' => self::quotaPeriodKey($period), 'tokens' => 0]);
     }
 
     /**

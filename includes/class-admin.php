@@ -131,6 +131,12 @@ final class Admin
         $s = Settings::get();
         $updated = isset($_GET['updated']);
         $cacheCleared = isset($_GET['cache_cleared']);
+        $quota = max(0, (int) $s['tokenQuota']);
+        $usage = Repository::getTokenUsage((string) $s['quotaPeriod']);
+        $used = (int) $usage['tokens'];
+        $remaining = $quota > 0 ? max(0, $quota - $used) : null;
+        $quotaPercent = $quota > 0 ? min(100, (int) round($used / max(1, $quota) * 100)) : 0;
+        $quotaReached = $quota > 0 && $used >= $quota;
         ?>
         <div class="wrap aicommentaudit-wrap">
             <div class="aicommentaudit-page-head">
@@ -156,6 +162,7 @@ final class Admin
 
                 <nav class="nav-tab-wrapper aicommentaudit-tabs" role="tablist" aria-label="<?php esc_attr_e('设置分组', 'ai-comment-audit'); ?>">
                     <button type="button" class="nav-tab nav-tab-active" id="aicommentaudit-tab-connection" data-tab="connection" role="tab" aria-selected="true" aria-controls="aicommentaudit-panel-connection"><?php esc_html_e('连接', 'ai-comment-audit'); ?></button>
+                    <button type="button" class="nav-tab" id="aicommentaudit-tab-quota" data-tab="quota" role="tab" aria-selected="false" aria-controls="aicommentaudit-panel-quota"><?php esc_html_e('额度', 'ai-comment-audit'); ?></button>
                     <button type="button" class="nav-tab" id="aicommentaudit-tab-words" data-tab="words" role="tab" aria-selected="false" aria-controls="aicommentaudit-panel-words"><?php esc_html_e('词表', 'ai-comment-audit'); ?></button>
                     <button type="button" class="nav-tab" id="aicommentaudit-tab-blacklist" data-tab="blacklist" role="tab" aria-selected="false" aria-controls="aicommentaudit-panel-blacklist"><?php esc_html_e('黑名单', 'ai-comment-audit'); ?></button>
                     <button type="button" class="nav-tab" id="aicommentaudit-tab-precheck" data-tab="precheck" role="tab" aria-selected="false" aria-controls="aicommentaudit-panel-precheck"><?php esc_html_e('频率与链接', 'ai-comment-audit'); ?></button>
@@ -194,6 +201,49 @@ final class Admin
                         <tr><th><?php esc_html_e('调试日志', 'ai-comment-audit'); ?></th>
                             <td><label><input type="radio" name="debug" value="1" <?php checked(!empty($s['debug'])); ?>> <?php esc_html_e('开启', 'ai-comment-audit'); ?></label>
                             <label class="aicommentaudit-inline"><input type="radio" name="debug" value="0" <?php checked(empty($s['debug'])); ?>> <?php esc_html_e('关闭', 'ai-comment-audit'); ?></label></td></tr>
+                    </table>
+                </section>
+
+                <section class="aicommentaudit-panel" data-panel="quota" id="aicommentaudit-panel-quota" role="tabpanel" aria-labelledby="aicommentaudit-tab-quota" hidden>
+                    <h3><?php esc_html_e('API 额度', 'ai-comment-audit'); ?></h3>
+                    <p class="aicommentaudit-section-desc"><?php esc_html_e('限制插件调用 AI 时最多消耗多少令牌。达到额度后，新评论会转为待审，不再请求接口。', 'ai-comment-audit'); ?></p>
+                    <table class="form-table">
+                        <tr><th><label for="aicommentaudit-token-quota"><?php esc_html_e('令牌额度', 'ai-comment-audit'); ?></label></th>
+                            <td>
+                                <div class="aicommentaudit-quota-fields">
+                                    <input type="number" min="0" step="1000" id="aicommentaudit-token-quota" name="tokenQuota" value="<?php echo (int) $s['tokenQuota']; ?>" placeholder="0">
+                                    <select name="quotaPeriod">
+                                        <option value="daily" <?php selected($s['quotaPeriod'], 'daily'); ?>><?php esc_html_e('每日重置', 'ai-comment-audit'); ?></option>
+                                        <option value="monthly" <?php selected($s['quotaPeriod'], 'monthly'); ?>><?php esc_html_e('每月重置', 'ai-comment-audit'); ?></option>
+                                        <option value="total" <?php selected($s['quotaPeriod'], 'total'); ?>><?php esc_html_e('累计（不自动重置）', 'ai-comment-audit'); ?></option>
+                                    </select>
+                                </div>
+                                <p class="description"><?php esc_html_e('填 0 表示不限制。按服务商返回的 usage.total_tokens 统计，包括评论审核、历史扫描和测试连接。', 'ai-comment-audit'); ?></p>
+                            </td></tr>
+                        <tr><th><?php esc_html_e('当前周期用量', 'ai-comment-audit'); ?></th>
+                            <td>
+                                <div class="aicommentaudit-quota-summary <?php echo $quotaReached ? 'is-reached' : ''; ?>">
+                                    <strong><?php echo esc_html(number_format_i18n($used)); ?> tokens</strong>
+                                    <?php if ($quota > 0): ?>
+                                        <span>/ <?php echo esc_html(number_format_i18n($quota)); ?>（<?php echo (int) $quotaPercent; ?>%）· <?php esc_html_e('剩余', 'ai-comment-audit'); ?> <?php echo esc_html(number_format_i18n($remaining)); ?></span>
+                                    <?php else: ?>
+                                        <span><?php esc_html_e('未设置上限', 'ai-comment-audit'); ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <?php if ($quota > 0): ?>
+                                    <div class="aicommentaudit-quota-meter <?php echo $quotaReached ? 'is-reached' : ''; ?>">
+                                        <span style="width:<?php echo (int) $quotaPercent; ?>%"></span>
+                                    </div>
+                                <?php endif; ?>
+                                <p class="description">
+                                    <?php if ($quotaReached): ?>
+                                        <?php esc_html_e('额度已用完，新评论会转待审。可以调高额度或重置已用额度。', 'ai-comment-audit'); ?>
+                                    <?php else: ?>
+                                        <?php esc_html_e('额度用完后不会继续调用 AI，避免产生额外费用。', 'ai-comment-audit'); ?>
+                                    <?php endif; ?>
+                                </p>
+                                <label class="aicommentaudit-inline"><input type="checkbox" name="reset_token_usage" value="1"> <?php esc_html_e('保存时重置已用额度', 'ai-comment-audit'); ?></label>
+                            </td></tr>
                     </table>
                 </section>
 
@@ -545,6 +595,9 @@ final class Admin
         $settings['model'] = sanitize_text_field(wp_unslash((string) ($_POST['model'] ?? 'deepseek-flash')));
         $settings['timeout'] = max(3, (int) ($_POST['timeout'] ?? 8));
         $settings['maxTokens'] = max(300, (int) ($_POST['maxTokens'] ?? 1200));
+        $settings['tokenQuota'] = max(0, min(1000000000000, (int) ($_POST['tokenQuota'] ?? 0)));
+        $quotaPeriod = sanitize_key((string) ($_POST['quotaPeriod'] ?? 'monthly'));
+        $settings['quotaPeriod'] = in_array($quotaPeriod, ['daily', 'monthly', 'total'], true) ? $quotaPeriod : 'monthly';
 
         if (!empty($_POST['api_key_clear'])) {
             $settings['apiKey'] = '';
@@ -584,6 +637,9 @@ final class Admin
         }
 
         Settings::update($settings);
+        if (!empty($_POST['reset_token_usage'])) {
+            Repository::resetTokenUsage($settings['quotaPeriod']);
+        }
         wp_safe_redirect(admin_url('admin.php?page=aicommentaudit-settings&updated=1'));
         exit;
     }

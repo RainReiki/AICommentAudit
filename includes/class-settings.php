@@ -33,6 +33,8 @@ final class Settings
             'disableThinking' => 0,
             'timeout' => 8,
             'maxTokens' => 1200,
+            'tokenQuota' => 0,
+            'quotaPeriod' => 'monthly',
             'sslVerify' => 1,
             'debug' => 0,
             'identityProtection' => 1,

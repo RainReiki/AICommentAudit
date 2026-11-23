@@ -17,6 +17,7 @@ AICommentAudit 把评论审核拆成三层：
 - 本地预检：同一 IP 频率、重复评论、链接数量、疑似词；
 - AI 审核：DeepSeek 官方或 OpenAI 兼容中转站；
 - 支持 `/v1` 自动补全、完整 endpoint、SSE、模型列表、思考模式、最大 token；
+- API 令牌额度：按日 / 月 / 累计限制，超限后新评论转待审，不再请求接口；
 - 回复评论参考父评论和上级对话；
 - 身份检查：AI 0–10 分，高风险直接拒绝，中风险待审；
 - 信誉体系：新用户 / 普通用户 / 老访客 / 白名单；
@@ -27,7 +28,7 @@ AICommentAudit 把评论审核拆成三层：
 
 ## 安装
 
-1. 下载 Release 中的 [AICommentAudit-1.2.0.zip](https://github.com/RainReiki/AICommentAudit/releases/download/v1.2.0/AICommentAudit-1.2.0.zip)；
+1. 下载 Release 中的 [AICommentAudit-1.3.0.zip](https://github.com/RainReiki/AICommentAudit/releases/download/v1.3.0/AICommentAudit-1.3.0.zip)；
 2. 后台 → 插件 → 安装插件 → 上传 zip；
 3. 启用插件；
 4. 打开「评论审核 → 设置」，填写服务地址、API Key 和模型；
@@ -52,6 +53,13 @@ assets/                后台 CSS / JS
 ```
 
 ## 更新日志
+
+### 1.3.0（2026-11-23）
+
+- 新增 API 令牌额度设置：每日 / 每月 / 累计三种周期，0 表示不限制。
+- 额度用尽后新评论自动转待审，不再调用 AI；测试连接仍可手动执行。
+- 设置页新增“额度”分栏，显示已用、剩余、进度条，可保存时重置。
+- 按服务商返回的 `usage.total_tokens` 统计评论审核、历史扫描和测试连接。
 
 ### 1.2.0（2026-11-23）
 

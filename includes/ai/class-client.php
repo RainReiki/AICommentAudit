@@ -13,7 +13,7 @@ defined('ABSPATH') || exit;
  */
 final class Client
 {
-    private const USER_AGENT = 'AICommentAudit-WP/1.2.0';
+    private const USER_AGENT = 'AICommentAudit-WP/1.3.0';
 
     /**
      * @param array $comment
@@ -21,9 +21,10 @@ final class Client
      * @param array $features
      * @param array $settings
      * @param bool $preview
+     * @param bool $ignoreQuota Allow the connection test to run even when the quota is exhausted.
      * @return array
      */
-    public static function audit(array $comment, array $article, array $features, array $settings, bool $preview = false): array
+    public static function audit(array $comment, array $article, array $features, array $settings, bool $preview = false, bool $ignoreQuota = false): array
     {
         $model = trim((string) ($settings['model'] ?? 'deepseek-flash'));
         if ($model === '') {
@@ -61,6 +62,19 @@ final class Client
         $circuit = Repository::getState('ai_circuit');
         if (!empty($circuit['open_until']) && (int) $circuit['open_until'] > time()) {
             return self::failure('ai_circuit_open');
+        }
+
+        $tokenQuota = max(0, (int) ($settings['tokenQuota'] ?? 0));
+        $quotaPeriod = (string) ($settings['quotaPeriod'] ?? 'monthly');
+        if (!$ignoreQuota && $tokenQuota > 0) {
+            $usage = Repository::getTokenUsage($quotaPeriod);
+            if ((int) $usage['tokens'] >= $tokenQuota) {
+                return self::failure('quota_exceeded', 0, sprintf(
+                    __('AI 令牌额度已用完（%1$s / %2$s tokens）。请调高额度或重置已用额度。', 'ai-comment-audit'),
+                    number_format_i18n((int) $usage['tokens']),
+                    number_format_i18n($tokenQuota)
+                ));
+            }
         }
 
         $messages = PromptBuilder::build($comment, $article, $features);
@@ -175,6 +189,14 @@ final class Client
         $parsed['tokens'] = (int) ($data['usage']['total_tokens'] ?? 0);
         $parsed['cached'] = false;
         $parsed['conversation'] = $features['conversation_context'];
+
+        if ($parsed['tokens'] > 0) {
+            try {
+                Repository::addTokenUsage((int) $parsed['tokens'], $quotaPeriod);
+            } catch (\Throwable $e) {
+                // Usage tracking must not break the audit.
+            }
+        }
 
         if ($preview) {
             return $parsed;

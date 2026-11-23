@@ -67,7 +67,7 @@ final class Ajax
         ];
 
         try {
-            $result = Client::audit($comment, $article, $features, Settings::get(), true);
+            $result = Client::audit($comment, $article, $features, Settings::get(), true, true);
             wp_send_json([
                 'success' => empty($result['error']) ? 1 : 0,
                 'result' => $result,
