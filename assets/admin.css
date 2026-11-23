@@ -1,0 +1,231 @@
+.aicommentaudit-wrap {
+    max-width: 1280px;
+}
+
+.aicommentaudit-wrap h1 {
+    margin-bottom: 6px;
+}
+
+.aicommentaudit-muted {
+    color: #646970;
+}
+
+.aicommentaudit-cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin: 18px 0;
+}
+
+.aicommentaudit-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.aicommentaudit-card {
+    background: #fff;
+    border: 1px solid #dcdcde;
+    border-radius: 6px;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.aicommentaudit-card h2 {
+    margin-top: 0;
+    font-size: 16px;
+}
+
+.aicommentaudit-stat span {
+    display: block;
+    color: #646970;
+    margin-bottom: 6px;
+}
+
+.aicommentaudit-stat strong {
+    font-size: 22px;
+    line-height: 1.2;
+}
+
+.aicommentaudit-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.aicommentaudit-table th,
+.aicommentaudit-table td {
+    padding: 8px;
+    vertical-align: top;
+    text-align: left;
+}
+
+.aicommentaudit-table th {
+    font-weight: 600;
+}
+
+.aicommentaudit-compact th,
+.aicommentaudit-compact td {
+    padding: 6px;
+}
+
+.aicommentaudit-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 1.6;
+    white-space: nowrap;
+}
+
+.aicommentaudit-badge-approved {
+    background: #edfaef;
+    color: #116329;
+}
+
+.aicommentaudit-badge-waiting {
+    background: #fff8e5;
+    color: #8a5700;
+}
+
+.aicommentaudit-badge-rejected {
+    background: #fcf0f1;
+    color: #b32d2e;
+}
+
+.aicommentaudit-badge-spam {
+    background: #f6f0f7;
+    color: #7b2d8e;
+}
+
+.aicommentaudit-tabs {
+    margin: 16px 0 0;
+}
+
+.aicommentaudit-panel {
+    background: #fff;
+    border: 1px solid #dcdcde;
+    border-top: 0;
+    padding: 4px 18px;
+}
+
+.aicommentaudit-panel .form-table th {
+    width: 200px;
+}
+
+.aicommentaudit-inline {
+    display: inline-block;
+    margin-right: 14px;
+}
+
+.aicommentaudit-filters {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 14px 0;
+    flex-wrap: wrap;
+}
+
+.aicommentaudit-model-select {
+    min-width: 240px;
+    max-width: 360px;
+    margin-left: 8px;
+}
+
+.aicommentaudit-modal {
+    width: min(720px, calc(100vw - 40px));
+    max-height: calc(100vh - 80px);
+    border: 1px solid #dcdcde;
+    border-radius: 8px;
+    padding: 0;
+}
+
+.aicommentaudit-modal::backdrop {
+    background: rgba(0, 0, 0, .5);
+}
+
+.aicommentaudit-modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #dcdcde;
+}
+
+.aicommentaudit-modal-head h2 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.aicommentaudit-modal-close {
+    border: 0;
+    background: transparent;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.aicommentaudit-modal-body {
+    padding: 16px;
+    overflow: auto;
+    max-height: calc(100vh - 160px);
+}
+
+.aicommentaudit-detail-row {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.aicommentaudit-detail-row strong {
+    color: #50575e;
+}
+
+.aicommentaudit-detail-row span {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.aicommentaudit-scan-controls,
+.aicommentaudit-scan-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+
+.aicommentaudit-scan-controls label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.aicommentaudit-clear-cache {
+    margin-top: 18px;
+}
+
+.aicommentaudit-wrap .tablenav-pages {
+    margin-top: 12px;
+}
+
+@media (max-width: 960px) {
+    .aicommentaudit-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .aicommentaudit-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .aicommentaudit-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .aicommentaudit-detail-row {
+        grid-template-columns: 1fr;
+    }
+}
