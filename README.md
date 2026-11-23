@@ -26,6 +26,10 @@ AICommentAudit 把评论审核拆成三层：
 - 原生评论列表审核状态列；
 - 测试连接并显示耗时。
 
+## 相关项目
+
+- [CommentAudit](https://github.com/RainReiki/CommentAudit)：同作者的 Typecho 版本，功能对应，适合 Typecho 1.3.x。如果你使用 Typecho，请使用这个仓库；WordPress 版继续维护。
+
 ## 安装
 
 1. 下载 Release 中的 [AICommentAudit-1.3.1.zip](https://github.com/RainReiki/AICommentAudit/releases/download/v1.3.1/AICommentAudit-1.3.1.zip)；
