@@ -48,7 +48,7 @@ jobs:
           wp config set DISABLE_WP_CRON true --raw --path="$SITE"
           wp core install --path="$SITE" --url=http://127.0.0.1:8768 --title='Disposable HTTP test' --admin_user=audit-test --admin_password="$AICA_WP_PASSWORD" --admin_email=audit@example.test --skip-email
           unzip -q dist/AICommentAudit-*.zip -d "$SITE/wp-content/plugins"
-          wp plugin activate ai-comment-audit --ignore-requirements --path="$SITE"
+          wp plugin activate ai-comment-audit --path="$SITE"
           PHP_CLI_SERVER_WORKERS=4 php -S 127.0.0.1:8768 -t "$SITE" > "$RUNNER_TEMP/aica-http/server.log" 2>&1 &
           SERVER_PID=$!
           trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
