@@ -8,7 +8,9 @@ final class Admin
 {
     public static function boot(): void
     {
-        add_action('admin_menu', [__CLASS__, 'menu']);
+        // The parent menu must exist before WordPress derives this page's
+        // hook suffix and sidebar URL. Plugin::boot registers it at priority 10.
+        add_action('admin_menu', [__CLASS__, 'menu'], 20);
         add_action('admin_post_aicommentaudit_check_update', [__CLASS__, 'check']);
         add_action('admin_post_aicommentaudit_install_update', [__CLASS__, 'install']);
         add_action('aicommentaudit_check_updates', [__CLASS__, 'scheduledCheck']);

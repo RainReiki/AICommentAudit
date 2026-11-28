@@ -38,7 +38,8 @@ define('ABSPATH', $work . '/wordpress/');
 define('WP_CONTENT_DIR', $work . '/content');
 define('AICOMMENTAUDIT_DIR', $work . '/plugin/');
 define('AICOMMENTAUDIT_FILE', AICOMMENTAUDIT_DIR . 'ai-comment-audit.php');
-define('AICOMMENTAUDIT_VERSION', '1.5.0');
+preg_match('/Version:\s*(\d+\.\d+\.\d+)/', file_get_contents($repo . '/ai-comment-audit.php'), $installedMatch);
+define('AICOMMENTAUDIT_VERSION', $installedMatch[1]);
 define('HOUR_IN_SECONDS', 3600);
 define('ARRAY_A', 'ARRAY_A');
 function wp_normalize_path($path) { return str_replace('\\', '/', $path); }
@@ -130,7 +131,7 @@ foreach (['logs', 'reputation', 'ai_cache', 'state'] as $key) {
     $wpdb->query("INSERT INTO wp_aicommentaudit_{$key} VALUES (1, 'original')");
     $wpdb->query("ALTER TABLE wp_aicommentaudit_{$key} AUTO_INCREMENT = 101");
 }
-$options = ['aicommentaudit_migration_version' => '1.5.0'];
+$options = ['aicommentaudit_migration_version' => AICOMMENTAUDIT_VERSION];
 $transients = $requests = [];
 foreach (['class-guard', 'class-release', 'class-migrations', 'class-updater'] as $file) require $repo . '/includes/update/' . $file . '.php';
 use AICommentAudit\Update\Guard;
@@ -155,9 +156,9 @@ touch(AICOMMENTAUDIT_DIR . 'assets/admin.js', 1600000000);
 $targetFiles = $originalFiles;
 unset($targetFiles['assets/obsolete.txt']);
 $targetFiles['README.md'] .= "\nFixture upgrade\n";
-$targetFiles['ai-comment-audit.php'] = str_replace('1.5.0', '1.7.0', $targetFiles['ai-comment-audit.php']);
+$targetFiles['ai-comment-audit.php'] = str_replace(AICOMMENTAUDIT_VERSION, '1.7.0', $targetFiles['ai-comment-audit.php']);
 $targetFiles['includes/new-file.php'] = $case === 'syntax' ? '<?php syntax error here' : '<?php /* new */';
-$targetFiles['migrations/1.6.0.json'] = json_encode(['version' => '1.6.0', 'from' => '1.5.0', 'steps' => [
+$targetFiles['migrations/1.6.0.json'] = json_encode(['version' => '1.6.0', 'from' => AICOMMENTAUDIT_VERSION, 'steps' => [
     ['table' => 'logs', 'action' => 'add_column', 'column' => 'upgrade_note', 'definition' => "VARCHAR(30) NOT NULL DEFAULT ''"]]]);
 $targetFiles['migrations/1.7.0.json'] = json_encode(['version' => '1.7.0', 'from' => '1.6.0', 'steps' => [
     ['table' => 'logs', 'action' => 'update_rows', 'values' => [$case === 'migration' ? 'missing_column' : 'upgrade_note' => 'done'], 'where' => ['id' => 1]]]]);
@@ -165,7 +166,7 @@ $target = $installed;
 $target['version'] = '1.7.0';
 $target['files'] = [];
 foreach ($targetFiles as $path => $bytes) $target['files'][$path] = ['sha256' => hash('sha256', $bytes), 'size' => strlen($bytes)];
-$target['migrations'][] = ['version' => '1.6.0', 'from' => '1.5.0', 'path' => 'migrations/1.6.0.json'];
+$target['migrations'][] = ['version' => '1.6.0', 'from' => AICOMMENTAUDIT_VERSION, 'path' => 'migrations/1.6.0.json'];
 $target['migrations'][] = ['version' => '1.7.0', 'from' => '1.6.0', 'path' => 'migrations/1.7.0.json'];
 $targetBytes = json_encode($target);
 Guard::enter();
@@ -180,7 +181,7 @@ function unchanged(): void {
     check(!file_exists(AICOMMENTAUDIT_DIR . 'migrations/1.6.0.json'), 'migration file rolled back');
     check($wpdb->get_var('SELECT content FROM wp_aicommentaudit_logs WHERE id=1') === 'original', 'data restored');
     check(!$wpdb->get_results("SHOW COLUMNS FROM wp_aicommentaudit_logs LIKE 'upgrade_note'"), 'schema restored');
-    check(get_option('aicommentaudit_migration_version') === '1.5.0', 'db version restored');
+    check(get_option('aicommentaudit_migration_version') === AICOMMENTAUDIT_VERSION, 'db version restored');
     check(filemtime(AICOMMENTAUDIT_DIR . 'assets/admin.js') === 1600000000, 'untouched mtime');
     check(file_get_contents(AICOMMENTAUDIT_DIR . 'local-extra.txt') === 'keep me', 'extra preserved');
     check(!is_file(Guard::directory() . '/journal.json'), 'journal cleaned');
@@ -213,14 +214,14 @@ try {
         expectFailure(fn() => Migrations::pending($bad, '1.5.0'), 'missing final version');
         $bad = $target; $bad['files']['migrations/1.5.0.json']['sha256'] = str_repeat('b', 64);
         expectFailure(fn() => Updater::plan($bad, $installed), 'rewritten history');
-        expectFailure(fn() => Migrations::document(json_encode(['version' => '1.6.0', 'from' => '1.5.0', 'steps' => [['table' => 'options', 'action' => 'drop_column', 'column' => 'secret']]]), '1.6.0'), 'outside plugin tables');
-        expectFailure(fn() => Migrations::document(json_encode(['version' => '1.6.0', 'from' => '1.5.0', 'steps' => [['table' => 'logs', 'action' => 'add_column', 'column' => 'x', 'definition' => 'INT; DROP TABLE wp_options']]]), '1.6.0'), 'SQL escape');
+        expectFailure(fn() => Migrations::document(json_encode(['version' => '1.6.0', 'from' => AICOMMENTAUDIT_VERSION, 'steps' => [['table' => 'options', 'action' => 'drop_column', 'column' => 'secret']]]), '1.6.0'), 'outside plugin tables');
+        expectFailure(fn() => Migrations::document(json_encode(['version' => '1.6.0', 'from' => AICOMMENTAUDIT_VERSION, 'steps' => [['table' => 'logs', 'action' => 'add_column', 'column' => 'x', 'definition' => 'INT; DROP TABLE wp_options']]]), '1.6.0'), 'SQL escape');
         check(true, '13 validation rejections');
         unchanged();
     } elseif (in_array($case, ['recover_before_swap', 'recover_after_swap', 'committed_cleanup'], true)) {
         Guard::exclusive();
         $id = bin2hex(random_bytes(8));
-        $j = ['id' => $id, 'root' => wp_normalize_path(AICOMMENTAUDIT_DIR), 'phase' => 'applying', 'old_db_version' => '1.5.0', 'tables' => [], 'operations' => []];
+        $j = ['id' => $id, 'root' => wp_normalize_path(AICOMMENTAUDIT_DIR), 'phase' => 'applying', 'old_db_version' => AICOMMENTAUDIT_VERSION, 'tables' => [], 'operations' => []];
         $path = 'README.md';
         Guard::write(Guard::directory() . '/' . $id . '/backup/' . $path, $originalFiles[$path], 0600);
         $j['operations'][] = ['path' => $path, 'existed' => true, 'mode' => 0644, 'mtime' => 1600000001, 'backup_hash' => hash('sha256', $originalFiles[$path])];
@@ -251,7 +252,7 @@ try {
     } elseif ($case === 'manual') {
         delete_option('aicommentaudit_migration_version');
         Migrations::upgradeInstalled();
-        check(get_option('aicommentaudit_migration_version') === '1.5.0', 'first install baseline migrated');
+        check(get_option('aicommentaudit_migration_version') === AICOMMENTAUDIT_VERSION, 'first install baseline migrated');
         check(!is_file(Guard::directory() . '/journal.json'), 'first install cleanup');
     } else {
         if ($case === 'conflict') {

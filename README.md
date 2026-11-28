@@ -34,7 +34,7 @@ AICommentAudit 把评论审核拆成三层：
 
 ## 安装
 
-1. 下载 Release 中的 [AICommentAudit-1.5.0.zip](https://github.com/RainReiki/AICommentAudit/releases/download/v1.5.0/AICommentAudit-1.5.0.zip)；
+1. 下载 Release 中的 [AICommentAudit-1.5.1.zip](https://github.com/RainReiki/AICommentAudit/releases/download/v1.5.1/AICommentAudit-1.5.1.zip)；
 2. 后台 → 插件 → 安装插件 → 上传 zip；
 3. 启用插件；
 4. 打开「评论审核 → 设置」，填写服务地址、API Key 和模型；
@@ -44,7 +44,7 @@ AICommentAudit 把评论审核拆成三层：
 
 ## 在线升级
 
-先手动安装一次 1.5.0 正式 ZIP，以后打开「评论审核 → 在线升级」检查 GitHub Releases 并执行升级。插件只下载差异文件，未变文件不写入；失败时恢复文件和插件数据库，跨版本依次执行每个版本的数据库变更文件。每天两次自动检查，不自动安装。
+先手动安装一次 1.5.1 正式 ZIP，以后打开「评论审核 → 在线升级」检查 GitHub Releases 并执行升级。插件只下载差异文件，未变文件不写入；失败时恢复文件和插件数据库，跨版本依次执行每个版本的数据库变更文件。每天两次自动检查，不自动安装。
 
 数据库迁移先在副本上执行，成功后切换；升级中断由恢复日志在下次请求自动恢复。当前支持单站点，需要目录写权限、数据库迁移权限和可用的本站回环请求。检测到与升级冲突的本地定制时停止升级。
 
@@ -90,6 +90,13 @@ assets/                后台 CSS / JS
 ```
 
 ## 更新日志
+
+### 1.5.1（2026-11-28）
+
+- 修复「在线升级」子菜单早于「评论审核」父菜单注册，引发侧边链接 404 和直接访问页面被拒绝的问题。
+- 调整菜单注册顺序，使用正确的 `admin.php?page=aicommentaudit-update` 地址及页面权限钩子。
+- 增加真实 WordPress 后台登录、侧边菜单和表单 HTTP 回归测试，覆盖检查更新、模拟跨版本升级、失败回滚和成功跳转。
+- 1.5.0 用户需手动上传一次 1.5.1 修复包恢复页面入口；后续可正常使用在线差异升级。
 
 ### 1.5.0（2026-11-28）
 

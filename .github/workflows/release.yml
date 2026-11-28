@@ -24,6 +24,7 @@ jobs:
         with:
           php-version: '8.0'
           extensions: mysqli
+          tools: wp-cli
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -35,6 +36,24 @@ jobs:
           AICA_DB_PORT: '3306'
           AICA_DB_USER: root
           AICA_DB_PASSWORD: test-only
+      - name: Exercise real WordPress sidebar and upgrade POST requests
+        env:
+          AICA_WP_PASSWORD: isolated-validation-only
+        run: |
+          SITE="$RUNNER_TEMP/aica-http/wordpress"
+          mkdir -p "$SITE"
+          php -r '$db = new mysqli("127.0.0.1", "root", "test-only", null, 3306); if (!$db->query("CREATE DATABASE aica_http_ci")) { exit(1); }'
+          wp core download --path="$SITE"
+          wp config create --path="$SITE" --dbname=aica_http_ci --dbuser=root --dbpass=test-only --dbhost=127.0.0.1:3306 --skip-check
+          wp config set DISABLE_WP_CRON true --raw --path="$SITE"
+          wp core install --path="$SITE" --url=http://127.0.0.1:8768 --title='Disposable HTTP test' --admin_user=audit-test --admin_password="$AICA_WP_PASSWORD" --admin_email=audit@example.test --skip-email
+          unzip -q dist/AICommentAudit-*.zip -d "$SITE/wp-content/plugins"
+          wp plugin activate ai-comment-audit --ignore-requirements --path="$SITE"
+          PHP_CLI_SERVER_WORKERS=4 php -S 127.0.0.1:8768 -t "$SITE" > "$RUNNER_TEMP/aica-http/server.log" 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          curl --retry 10 --retry-all-errors --retry-delay 1 --silent --output /dev/null http://127.0.0.1:8768/wp-login.php
+          python tests/wordpress-http-test.py --site "$SITE" --base-url http://127.0.0.1:8768 --wp-cli "$(command -v wp)"
       - uses: actions/upload-artifact@v4
         with:
           name: release
