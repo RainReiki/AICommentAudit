@@ -166,7 +166,7 @@ final class Admin
                     <button type="button" class="nav-tab" id="aicommentaudit-tab-quota" data-tab="quota" role="tab" aria-selected="false" aria-controls="aicommentaudit-panel-quota"><?php esc_html_e('额度', 'ai-comment-audit'); ?></button>
                     <button type="button" class="nav-tab" id="aicommentaudit-tab-words" data-tab="words" role="tab" aria-selected="false" aria-controls="aicommentaudit-panel-words"><?php esc_html_e('词表', 'ai-comment-audit'); ?></button>
                     <button type="button" class="nav-tab" id="aicommentaudit-tab-blacklist" data-tab="blacklist" role="tab" aria-selected="false" aria-controls="aicommentaudit-panel-blacklist"><?php esc_html_e('黑名单', 'ai-comment-audit'); ?></button>
-                    <button type="button" class="nav-tab" id="aicommentaudit-tab-precheck" data-tab="precheck" role="tab" aria-selected="false" aria-controls="aicommentaudit-panel-precheck"><?php esc_html_e('频率与链接', 'ai-comment-audit'); ?></button>
+                    <button type="button" class="nav-tab" id="aicommentaudit-tab-precheck" data-tab="precheck" role="tab" aria-selected="false" aria-controls="aicommentaudit-panel-precheck"><?php esc_html_e('本地预检', 'ai-comment-audit'); ?></button>
                     <button type="button" class="nav-tab" id="aicommentaudit-tab-policy" data-tab="policy" role="tab" aria-selected="false" aria-controls="aicommentaudit-panel-policy"><?php esc_html_e('审核策略', 'ai-comment-audit'); ?></button>
                     <button type="button" class="nav-tab" id="aicommentaudit-tab-advanced" data-tab="advanced" role="tab" aria-selected="false" aria-controls="aicommentaudit-panel-advanced"><?php esc_html_e('高级', 'ai-comment-audit'); ?></button>
                 </nav>
@@ -285,6 +285,23 @@ final class Admin
                 </section>
 
                 <section class="aicommentaudit-panel" data-panel="precheck" id="aicommentaudit-panel-precheck" role="tabpanel" aria-labelledby="aicommentaudit-tab-precheck" hidden>
+                    <h3><?php esc_html_e('非中文评论规则', 'ai-comment-audit'); ?></h3>
+                    <p class="aicommentaudit-section-desc"><?php esc_html_e('仅检查评论正文：不含任何汉字，且英文字母占比达到阈值时触发。含中文或未达到阈值的评论继续原审核流程。', 'ai-comment-audit'); ?></p>
+                    <table class="form-table">
+                        <tr><th><?php esc_html_e('启用非中文评论规则', 'ai-comment-audit'); ?></th>
+                            <td><fieldset class="aicommentaudit-language-options" aria-label="<?php esc_attr_e('启用非中文评论规则', 'ai-comment-audit'); ?>">
+                                <label><input type="radio" name="englishFilterEnabled" value="1" <?php checked(!empty($s['englishFilterEnabled'])); ?>> <?php esc_html_e('开启', 'ai-comment-audit'); ?></label>
+                                <label><input type="radio" name="englishFilterEnabled" value="0" <?php checked(empty($s['englishFilterEnabled'])); ?>> <?php esc_html_e('关闭', 'ai-comment-audit'); ?></label>
+                            </fieldset><p class="description"><?php esc_html_e('默认关闭；开启后保存生效。', 'ai-comment-audit'); ?></p></td></tr>
+                        <tr><th><label for="aicommentaudit-english-ratio"><?php esc_html_e('英文占比阈值', 'ai-comment-audit'); ?></label></th>
+                            <td><div class="aicommentaudit-ratio-input"><input type="number" min="1" max="100" step="1" id="aicommentaudit-english-ratio" name="englishRatioThreshold" value="<?php echo (int) $s['englishRatioThreshold']; ?>" aria-describedby="aicommentaudit-english-ratio-help"><span aria-hidden="true">%</span></div>
+                            <p class="description" id="aicommentaudit-english-ratio-help"><?php esc_html_e('范围 1–100%，默认 80%。英文含 A–Z / a–z 及全角形式；以去除 HTML 标签、空白和不可见格式字符后的正文字符数为分母，数字、标点、表情计入总数。例如 abcd1 的英文占比为 80%，达到 80% 即触发。', 'ai-comment-audit'); ?></p></td></tr>
+                        <tr><th><?php esc_html_e('达到阈值时', 'ai-comment-audit'); ?></th>
+                            <td><fieldset class="aicommentaudit-language-options" aria-label="<?php esc_attr_e('达到阈值时', 'ai-comment-audit'); ?>">
+                                <label><input type="radio" name="englishFilterAction" value="reject" <?php checked($s['englishFilterAction'], 'reject'); ?>> <?php esc_html_e('直接拒绝', 'ai-comment-audit'); ?></label>
+                                <label><input type="radio" name="englishFilterAction" value="ai" <?php checked($s['englishFilterAction'], 'ai'); ?>> <?php esc_html_e('继续 AI 审核', 'ai-comment-audit'); ?></label>
+                            </fieldset><p class="description"><?php esc_html_e('直接拒绝：不调用 AI，按原插件行为存为垃圾评论并记录原因。继续 AI 审核：仍执行后续本地检查、AI 和信誉判断；AI 异常或额度不足时转待审。历史扫描若选择「仅本地规则」，需要 AI 的命中项显示为待审。', 'ai-comment-audit'); ?></p></td></tr>
+                    </table>
                     <h3><?php esc_html_e('频率与链接', 'ai-comment-audit'); ?></h3>
                     <p class="aicommentaudit-section-desc"><?php esc_html_e('在提交给 AI 之前检查同一 IP 的发评频率和评论中的链接数。', 'ai-comment-audit'); ?></p>
                     <table class="form-table">
@@ -634,6 +651,15 @@ final class Admin
         $settings['ipRateLimit'] = max(0, (int) ($_POST['ipRateLimit'] ?? 5));
         $settings['ipRateWindow'] = max(60, (int) ($_POST['ipRateWindow'] ?? 600));
         $settings['linkLimit'] = max(0, (int) ($_POST['linkLimit'] ?? 3));
+        $settings['englishFilterEnabled'] = isset($_POST['englishFilterEnabled'])
+            ? (($_POST['englishFilterEnabled'] === '1') ? 1 : 0)
+            : (int) $current['englishFilterEnabled'];
+        $englishRatio = $_POST['englishRatioThreshold'] ?? $current['englishRatioThreshold'];
+        $settings['englishRatioThreshold'] = is_scalar($englishRatio) && is_numeric($englishRatio)
+            ? max(1, min(100, (int) $englishRatio)) : 80;
+        $englishAction = $_POST['englishFilterAction'] ?? $current['englishFilterAction'];
+        $settings['englishFilterAction'] = in_array($englishAction, ['reject', 'ai'], true)
+            ? $englishAction : 'reject';
         $settings['logRetention'] = max(1, min(3650, (int) ($_POST['logRetention'] ?? 90)));
         $settings['cacheTtl'] = max(1, (int) ($_POST['cacheTtl'] ?? 7));
 

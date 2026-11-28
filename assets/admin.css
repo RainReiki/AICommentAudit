@@ -235,6 +235,27 @@
     line-height: 1.55;
 }
 
+.aicommentaudit-language-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+}
+
+.aicommentaudit-ratio-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 100%;
+}
+
+.aicommentaudit-ratio-input input[type="number"] {
+    width: 100px;
+}
+
 /* Inputs */
 .aicommentaudit-panel input[type="text"],
 .aicommentaudit-panel input[type="password"],
@@ -283,6 +304,7 @@
 
 /* Radio / checkbox chips */
 .aicommentaudit-panel .form-table td > label,
+.aicommentaudit-language-options > label,
 .aicommentaudit-inline {
     display: inline-flex;
     align-items: center;
@@ -300,12 +322,14 @@
 }
 
 .aicommentaudit-panel .form-table td > label:hover,
+.aicommentaudit-language-options > label:hover,
 .aicommentaudit-inline:hover {
     border-color: #8c8f94;
     background: #fff;
 }
 
 .aicommentaudit-panel .form-table td > label:has(input:checked),
+.aicommentaudit-language-options > label:has(input:checked),
 .aicommentaudit-inline:has(input:checked) {
     border-color: var(--ca-accent);
     background: var(--ca-accent-soft);

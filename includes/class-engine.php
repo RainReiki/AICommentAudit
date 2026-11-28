@@ -5,6 +5,7 @@ namespace AICommentAudit;
 use AICommentAudit\AI\Client;
 use AICommentAudit\Rules\Blacklist;
 use AICommentAudit\Rules\IdentityRisk;
+use AICommentAudit\Rules\LanguageFilter;
 use AICommentAudit\Rules\LocalPrecheck;
 use AICommentAudit\Rules\Trust;
 use AICommentAudit\Rules\WordFilter;
@@ -82,6 +83,17 @@ final class Engine
         }
 
         $flags = LocalPrecheck::flags($comment, $settings, $trustLevel);
+
+        if (LanguageFilter::matches($rawText, $settings)) {
+            $flags[] = 'non_chinese_english_ratio';
+            if (($settings['englishFilterAction'] ?? 'reject') === 'reject') {
+                return self::reject('local_english_ratio', $trustLevel, [], $flags);
+            }
+            // A local-only history scan cannot complete the requested AI review.
+            if (!$withAi) {
+                return self::waiting('history_english_ai_required', $trustLevel, [], $flags);
+            }
+        }
 
         if (!$withAi) {
             if (in_array('suspect_word', $flags, true)) {

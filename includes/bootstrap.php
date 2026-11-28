@@ -8,6 +8,7 @@ defined('ABSPATH') || exit;
 require_once AICOMMENTAUDIT_DIR . 'includes/rules/class-word-filter.php';
 require_once AICOMMENTAUDIT_DIR . 'includes/rules/class-blacklist.php';
 require_once AICOMMENTAUDIT_DIR . 'includes/rules/class-local-precheck.php';
+require_once AICOMMENTAUDIT_DIR . 'includes/rules/class-language-filter.php';
 require_once AICOMMENTAUDIT_DIR . 'includes/rules/class-trust.php';
 require_once AICOMMENTAUDIT_DIR . 'includes/rules/class-identity-risk.php';
 require_once AICOMMENTAUDIT_DIR . 'includes/rules/class-identity-context.php';

@@ -164,6 +164,8 @@ final class Logger
             'history_suspect_word' => __('命中疑似敏感词', 'ai-comment-audit'),
             'history_link_limit' => __('链接数量超过上限', 'ai-comment-audit'),
             'history_local_pass' => __('未命中本地规则', 'ai-comment-audit'),
+            'local_english_ratio' => __('正文无中文且英文占比达到阈值，本地拒绝', 'ai-comment-audit'),
+            'history_english_ai_required' => __('正文无中文且英文占比达到阈值，需继续 AI 审核', 'ai-comment-audit'),
             'history_moderate_abuse' => __('疑似中度辱骂', 'ai-comment-audit'),
             'identity_review' => __('身份信息存在疑点，转人工审核', 'ai-comment-audit'),
             'identity_local_risk' => __('昵称、邮箱或网址存在风险组合，转人工审核', 'ai-comment-audit'),
