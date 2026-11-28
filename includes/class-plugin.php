@@ -12,6 +12,8 @@ final class Plugin
     public static function boot(): void
     {
         Install::maybeUpgrade();
+        Update\Migrations::upgradeInstalled();
+        Update\Admin::boot();
         CommentHooks::boot();
         Ajax::boot();
 

@@ -12,6 +12,14 @@
     color: var(--ca-text);
 }
 
+.aicommentaudit-update-card { margin: 18px 0; }
+.aicommentaudit-update-versions { display: flex; flex-wrap: wrap; gap: 24px; margin: 0 0 18px; }
+.aicommentaudit-update-versions dt { color: var(--ca-muted); }
+.aicommentaudit-update-versions dd { margin: 4px 0 0; font-size: 18px; font-weight: 600; }
+.aicommentaudit-update-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.aicommentaudit-update-actions form { margin: 0; }
+.aicommentaudit-release-notes { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.7; }
+
 .aicommentaudit-wrap h1 {
     font-size: 26px;
     font-weight: 600;

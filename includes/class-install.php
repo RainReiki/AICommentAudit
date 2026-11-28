@@ -9,6 +9,7 @@ defined('ABSPATH') || exit;
  */
 final class Install
 {
+    // Frozen legacy schema baseline. Future changes belong in migrations/*.json.
     public const DB_VERSION = '1.1.0';
 
     /**
@@ -53,10 +54,9 @@ final class Install
     public static function activate(): void
     {
         wp_clear_scheduled_hook('commentaudit_daily_cleanup');
-        self::migrateLegacyTables();
-        self::createTables();
+        self::maybeUpgrade();
         Settings::installDefaults();
-        add_option('aicommentaudit_db_version', self::DB_VERSION, '', false);
+        Update\Migrations::upgradeInstalled();
 
         if (!wp_next_scheduled('aicommentaudit_daily_cleanup')) {
             wp_schedule_event(time() + 3600, 'daily', 'aicommentaudit_daily_cleanup');
@@ -68,6 +68,7 @@ final class Install
      */
     public static function deactivate(): void
     {
+        wp_clear_scheduled_hook('aicommentaudit_check_updates');
         wp_clear_scheduled_hook('aicommentaudit_daily_cleanup');
         wp_clear_scheduled_hook('commentaudit_daily_cleanup');
     }
@@ -242,9 +243,13 @@ final class Install
 
         delete_option(AICOMMENTAUDIT_OPTION);
         delete_option('aicommentaudit_db_version');
+        delete_option('aicommentaudit_migration_version');
+        delete_option('aicommentaudit_update_result');
+        delete_transient('aicommentaudit_github_release');
         delete_option('commentaudit_settings');
         delete_option('commentaudit_db_version');
         wp_clear_scheduled_hook('aicommentaudit_daily_cleanup');
+        wp_clear_scheduled_hook('aicommentaudit_check_updates');
         wp_clear_scheduled_hook('commentaudit_daily_cleanup');
     }
 }

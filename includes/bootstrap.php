@@ -26,4 +26,8 @@ require_once AICOMMENTAUDIT_DIR . 'includes/class-comment-hooks.php';
 require_once AICOMMENTAUDIT_DIR . 'includes/class-ajax.php';
 require_once AICOMMENTAUDIT_DIR . 'includes/class-admin.php';
 require_once AICOMMENTAUDIT_DIR . 'includes/class-install.php';
+require_once AICOMMENTAUDIT_DIR . 'includes/update/class-release.php';
+require_once AICOMMENTAUDIT_DIR . 'includes/update/class-migrations.php';
+require_once AICOMMENTAUDIT_DIR . 'includes/update/class-updater.php';
+require_once AICOMMENTAUDIT_DIR . 'includes/update/class-admin.php';
 require_once AICOMMENTAUDIT_DIR . 'includes/class-plugin.php';

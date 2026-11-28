@@ -1,3 +1,5 @@
 *.zip
 .DS_Store
 Thumbs.db
+dist/
+/update-manifest.json
