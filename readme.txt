@@ -4,7 +4,7 @@ Tags: comments, comment moderation, spam, ai, deepseek
 Requires at least: 7.1
 Tested up to: 7.1.5
 Requires PHP: 8.0
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,6 +78,11 @@ AI 调用是同步的。可以在设置里关闭思考模式、降低最大 toke
 评论内容、昵称、邮箱前缀与域名、网址域名、文章标题/原文/摘要、回复上下文、评论者信誉统计和身份历史摘要。不会发送完整邮箱、IP、网址路径或参数。
 
 == Changelog ==
+
+= 1.5.2 =
+* 修复在线升级页更新说明原样显示 Markdown 源码，改为展示 GitHub 渲染后的 HTML。
+* 支持标题、列表、加粗、链接、代码块和表格样式，经过 WordPress 安全过滤后输出。
+* 刷新旧更新缓存；新增真实后台页面格式及不安全 HTML 过滤测试。
 
 = 1.5.1 =
 * 修复「在线升级」子菜单早于父菜单注册导致侧边链接 404、直接访问页面被拒绝的问题。

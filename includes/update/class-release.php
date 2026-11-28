@@ -7,7 +7,8 @@ defined('ABSPATH') || exit;
 final class Release
 {
     public const REPO = 'RainReiki/AICommentAudit';
-    public const CACHE = 'aicommentaudit_github_release';
+    // A new key discards older cached releases containing Markdown text only.
+    public const CACHE = 'aicommentaudit_github_release_html';
     public const MANIFEST = 'update-manifest.json';
     public const MAX_FILE = 2097152;
 
@@ -22,7 +23,8 @@ final class Release
         if (!$force && is_array($cached)) {
             return $cached;
         }
-        $response = self::request('https://api.github.com/repos/' . self::REPO . '/releases/latest', 262144);
+        $response = self::request('https://api.github.com/repos/' . self::REPO . '/releases/latest', 262144,
+            'application/vnd.github.full+json');
         $release = json_decode($response, true, 64, JSON_THROW_ON_ERROR);
         $tag = $release['tag_name'] ?? '';
         $version = preg_replace('/^v/', '', $tag);
@@ -52,7 +54,9 @@ final class Release
             $manifest = self::manifest($bytes, $version);
         }
         $result = ['version' => $version, 'tag' => $tag, 'manifest' => $manifest,
-            'notes' => substr(wp_strip_all_tags((string) ($release['body'] ?? '')), 0, 12000), 'checked' => time()];
+            'notes' => substr(wp_strip_all_tags((string) ($release['body'] ?? '')), 0, 12000),
+            'notes_html' => !empty($release['body_html']) ? wp_kses_post((string) $release['body_html']) : '',
+            'checked' => time()];
         set_transient(self::CACHE, $result, 6 * HOUR_IN_SECONDS);
         return $result;
     }
@@ -88,10 +92,10 @@ final class Release
         return $m;
     }
 
-    public static function request(string $url, int $limit): string
+    public static function request(string $url, int $limit, string $accept = 'application/vnd.github+json'): string
     {
         $response = wp_safe_remote_get($url, ['timeout' => 30, 'redirection' => 5,
-            'limit_response_size' => $limit + 1, 'headers' => ['Accept' => 'application/vnd.github+json',
+            'limit_response_size' => $limit + 1, 'headers' => ['Accept' => $accept,
                 'User-Agent' => 'AICommentAudit/' . AICOMMENTAUDIT_VERSION]]);
         if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
             throw new \RuntimeException('无法从 GitHub 获取升级文件，请稍后重试（可能是网络或 API 频率限制）。');

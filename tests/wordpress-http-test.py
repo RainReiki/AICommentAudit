@@ -151,6 +151,11 @@ def main():
         status, url, checked = request(address, fields)
         assert status == 200 and url.endswith('admin.php?page=aicommentaudit-update'), (mode, status, url)
         assert '1.7.0' in checked and 'aicommentaudit_install_update' in checked
+        notes = re.search(r'<div class="aicommentaudit-release-notes">(.*?)</div>', checked, re.S)
+        assert notes is not None, 'Formatted release notes missing'
+        rendered = notes.group(1)
+        assert all(fragment in rendered for fragment in ['<h2>', '<ul>', '<li>', '<strong>', '<code>', '<a href=', '<pre>']), rendered
+        assert not any(fragment in rendered for fragment in ['## ', '**', '&lt;h2', '<script', 'javascript:', 'onclick=']), rendered
         address, fields = form('aicommentaudit_install_update', checked)
         status, url, result = request(address, fields)
         assert status == 200, (mode, status, result[:500])

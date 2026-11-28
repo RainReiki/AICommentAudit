@@ -18,7 +18,17 @@
 .aicommentaudit-update-versions dd { margin: 4px 0 0; font-size: 18px; font-weight: 600; }
 .aicommentaudit-update-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .aicommentaudit-update-actions form { margin: 0; }
-.aicommentaudit-release-notes { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.7; }
+.aicommentaudit-release-notes { overflow-wrap: anywhere; line-height: 1.7; }
+.aicommentaudit-release-notes h1,
+.aicommentaudit-release-notes h2,
+.aicommentaudit-release-notes h3 { margin: 1.2em 0 .6em; line-height: 1.4; font-size: 18px; }
+.aicommentaudit-release-notes ul { list-style: disc; padding-inline-start: 1.6em; }
+.aicommentaudit-release-notes ol { list-style: decimal; padding-inline-start: 1.6em; }
+.aicommentaudit-release-notes pre { max-width: 100%; overflow: auto; white-space: pre-wrap; }
+.aicommentaudit-release-notes blockquote { margin-inline: 0; padding-inline-start: 14px; border-inline-start: 3px solid var(--ca-border); }
+.aicommentaudit-release-notes table { display: block; max-width: 100%; overflow: auto; border-collapse: collapse; }
+.aicommentaudit-release-notes th,
+.aicommentaudit-release-notes td { padding: 6px 10px; border: 1px solid var(--ca-border); }
 
 .aicommentaudit-wrap h1 {
     font-size: 26px;

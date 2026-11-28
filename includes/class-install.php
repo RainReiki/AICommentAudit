@@ -246,6 +246,7 @@ final class Install
         delete_option('aicommentaudit_migration_version');
         delete_option('aicommentaudit_update_result');
         delete_transient('aicommentaudit_github_release');
+        delete_transient('aicommentaudit_github_release_html');
         delete_option('commentaudit_settings');
         delete_option('commentaudit_db_version');
         wp_clear_scheduled_hook('aicommentaudit_daily_cleanup');

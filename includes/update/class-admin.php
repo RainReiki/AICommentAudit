@@ -126,8 +126,8 @@ final class Admin
                     <a class="button" href="https://github.com/RainReiki/AICommentAudit/releases" target="_blank" rel="noopener noreferrer"><?php esc_html_e('查看发布记录', 'ai-comment-audit'); ?></a>
                 </div>
             </section>
-            <?php if (!empty($release['notes'])): ?>
-            <section class="aicommentaudit-card aicommentaudit-update-card"><h2><?php esc_html_e('更新说明', 'ai-comment-audit'); ?></h2><div class="aicommentaudit-release-notes"><?php echo esc_html($release['notes']); ?></div></section>
+            <?php if (!empty($release['notes_html'])): ?>
+            <section class="aicommentaudit-card aicommentaudit-update-card"><h2><?php esc_html_e('更新说明', 'ai-comment-audit'); ?></h2><div class="aicommentaudit-release-notes"><?php echo wp_kses_post($release['notes_html']); ?></div></section>
             <?php endif; ?>
         </div>
         <?php

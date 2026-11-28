@@ -34,7 +34,7 @@ AICommentAudit 把评论审核拆成三层：
 
 ## 安装
 
-1. 下载 Release 中的 [AICommentAudit-1.5.1.zip](https://github.com/RainReiki/AICommentAudit/releases/download/v1.5.1/AICommentAudit-1.5.1.zip)；
+1. 下载 Release 中的 [AICommentAudit-1.5.2.zip](https://github.com/RainReiki/AICommentAudit/releases/download/v1.5.2/AICommentAudit-1.5.2.zip)；
 2. 后台 → 插件 → 安装插件 → 上传 zip；
 3. 启用插件；
 4. 打开「评论审核 → 设置」，填写服务地址、API Key 和模型；
@@ -90,6 +90,13 @@ assets/                后台 CSS / JS
 ```
 
 ## 更新日志
+
+### 1.5.2（2026-11-28）
+
+- 修复在线升级页的更新说明直接显示 Markdown 源码的问题，使用 GitHub 渲染后的 HTML 展示标题、列表、加粗、链接和代码。
+- 更新说明经过 WordPress 安全过滤，排除脚本、危险链接和事件属性；补齐列表、代码块及表格的局部样式。
+- 使用新的更新缓存，避免继续显示旧的纯文本内容。升级后点击「检查更新」即可刷新说明。
+- 增加真实 WordPress 页面测试，验证格式化内容正常显示，并移除不安全 HTML。
 
 ### 1.5.1（2026-11-28）
 
